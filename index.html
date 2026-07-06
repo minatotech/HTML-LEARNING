@@ -1,102 +1,100 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Form</title>
+    <title>Form</title>
 </head>
 <body>
-    <form></form>
-<!-- First Name Section -->
-<div>
-    <label>First Name</label><br>
-    <input type="text" name="firstname">
-</div>
+<form>
+    <div class="fname-section">
+        <label for="fname">First Name</label><br>
+        <input type="text" id="fname" name="firstname" class="fname-input">
+    </div>
 
-<!-- Middle Name Section -->
-<div>
-    <label>Middle Name</label>
-    <input type="text" name="middlename">
-</div>
+    <div class="mname-section">
+        <label for="mname">Middle Name</label><br>
+        <input type="text" id="mname" name="middlename" class="mname-input">
+    </div>
 
-<!-- Last Name Section -->
-<div>
-    <label>Last Name</label><br>
-    <input type="text" name="lastname">
-</div>
+    <div class="lname-section">
+        <label for="lname">Last Name</label><br>
+        <input type="text" id="lname" name="lastname" class="lname-input">
+    </div>
 
-<!-- Father's Name Section -->
-<div>
-    <label>Father's Name</label><br>
-    <input type="text" name="fathername">
-</div>
+    <div class="father-section">
+        <label for="fathername">Father's Name</label><br>
+        <input type="text" id="fathername" name="fathername" class="father-input">
+    </div>
 
-<!-- Mother's Name Section -->
-<div>
-    <label>Mother's Name</label><br>
-    <input type="text" name="mothername">
-</div>
+    <div class="mother-section">
+        <label for="mothername">Mother's Name</label><br>
+        <input type="text" id="mothername" name="mothername" class="mother-input">
+    </div>
 
-<!-- Date of Birth Section -->
-<div>
-    <label>Date of birth</label><br>
-    <input type="date" name="dob">
-</div>
+    <div class="dob-section">
+        <label for="dob">Date of birth</label><br>
+        <input type="date" id="dob" name="dob" class="dob-input">
+    </div>
 
-<!-- Address Section -->
-<div>
-    <label>Address</label><br>
-    <input type="text" name="address">
-</div>
+    <div class="address-section">
+        <label for="address">Address</label><br>
+        <input type="text" id="address" name="address" class="address-input">
+    </div>
 
-<!-- Contact Number Section -->
-<div>
-    <label>Contact Number</label><br>
-    <input type="number" name="contact">
-</div>
+    <div class="contact-section">
+        <label for="contact">Contact Number</label><br>
+        <input type="number" id="contact" name="contact" class="contact-input">
+    </div>
 
-<!-- Date of Submission Section -->
-<div>
-    <label>Date of submission</label><br>
-    <input type="date" name="submissiondate">
-</div>
+    <div class="submission-section">
+        <label for="submissiondate">Date of submission</label><br>
+        <input type="date" id="submissiondate" name="submissiondate" class="submission-input">
+    </div>
 
-<!-- When do you get up Section -->
-<div>
-    <label>When do you get up?</label><br>
-    <input type="time" name="getuptime">
-</div>
+    <div class="getup-section">
+        <label for="getuptime">When do you get up?</label><br>
+        <input type="time" id="getuptime" name="getuptime" class="getup-input">
+    </div>
 
-<!-- Do you have laptop Section -->
-<div>
-    <label>Do you have laptop?</label><br>
-    <input type="radio" name="laptop" value="yes"> <label>Yes</label>
-    <input type="radio" name="laptop" value="no"> <label>No</label>
-</div>
+    <div class="laptop-section">
+        <label>Do you have laptop?</label><br>
+        <input type="radio" id="laptop-yes" name="laptop" value="yes" class="radio-input"> 
+        <label for="laptop-yes">Yes</label>
+        
+        <input type="radio" id="laptop-no" name="laptop" value="no" class="radio-input"> 
+        <label for="laptop-no">No</label>
+    </div>
 
-<!-- Do you have phone Section -->
-<div>
-    <label>Do you have phone?</label><br>
-    <input type="radio" name="phone" value="yes"> <label>Yes</label>
-    <input type="radio" name="phone" value="no"> <label>No</label>
-</div>
+    <div class="phone-section">
+        <label>Do you have phone?</label><br>
+        <input type="radio" id="phone-yes" name="phone" value="yes" class="radio-input"> 
+        <label for="phone-yes">Yes</label>
+        
+        <input type="radio" id="phone-no" name="phone" value="no" class="radio-input"> 
+        <label for="phone-no">No</label>
+    </div>
 
-<!-- Marital Status Section -->
-<div>
-    <label>Marital Status</label><br>
-    <input type="radio" name="marital" value="single"> <label>Single</label>
-    <input type="radio" name="marital" value="married"> <label>Married</label>
-</div>
+    <div class="marital-section">
+        <label>Marital Status</label><br>
+        <input type="radio" id="single" name="marital" value="single" class="radio-input"> 
+        <label for="single">Single</label>
+        
+        <input type="radio" id="married" name="marital" value="married" class="radio-input"> 
+        <label for="married">Married</label>
+    </div>
 
-<!-- Blood Group Section -->
-<div>
-    <label>Blood Group</label><br>
-    <input type="text" name="bloodgroup">
-</div>
+    <div class="blood-section">
+        <label for="bloodgroup">Blood Group</label><br>
+        <input type="text" id="bloodgroup" name="bloodgroup" class="blood-input">
+    </div>
 
-<!-- Gender Section -->
-<div>
-    <label>Gender</label><br>
-    <input type="radio" name="gender" value="male"> <label>Male</label>
-    <input type="radio" name="gender" value="female"> <label>Female</label>
-</div>
-    </form>
+    <div class="gender-section">
+        <label>Gender</label><br>
+        <input type="radio" id="male" name="gender" value="male" class="radio-input"> 
+        <label for="male">Male</label>
+        
+        <input type="radio" id="female" name="gender" value="female" class="radio-input"> 
+        <label for="female">Female</label>
+    </div>
+</form>
 </body>
 </html>
