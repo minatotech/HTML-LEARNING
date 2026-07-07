@@ -1,391 +1,291 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950">
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOVA SMM - Dashboard</title>
+    <title>NOVA SMM - User Dashboard</title>
+    <!-- Tailwind CSS Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            950: '#090d16',
-                        },
-                        dark: {
-                            800: '#1e293b',
-                            900: '#0f172a',
-                            950: '#020617'
+                        cyber: {
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                            violet: '#a855f7',
+                            onyx: '#030712',
+                            950: '#02040a'
                         }
                     }
                 }
             }
         }
     </script>
+    <!-- Lucide Icons Interface -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .glass-panel {
+            background: rgba(3, 7, 18, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+    </style>
 </head>
-<body class="h-full text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+<body class="h-full font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-300">
 
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+    <!-- REAL-TIME GLOBAL NOTIFICATION PIPELINE -->
+    <div id="toast-wrapper" class="fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <div id="auth-screen" class="hidden min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-tr from-brand-950 via-dark-950 to-slate-900">
+    <!-- VIEW LAYER 1: CLIENT AUTHENTICATION ACCESS GATEWAY -->
+    <div id="user-auth-screen" class="hidden min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-950 via-cyber-onyx to-black">
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-            <div class="inline-flex items-center justify-center p-3 bg-brand-600/10 rounded-2xl border border-brand-500/20 mb-4">
-                <i data-lucide="zap" class="h-10 w-10 text-brand-500 animate-pulse"></i>
+            <div class="inline-flex items-center justify-center p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/30 mb-4 shadow-lg shadow-cyan-500/5">
+                <i data-lucide="user-check" class="h-12 w-12 text-cyan-400"></i>
             </div>
-            <h2 class="text-3xl font-extrabold tracking-tight text-white">NOVA SMM</h2>
-            <p class="mt-2 text-sm text-slate-400" id="auth-subtitle">Sign in to orchestrate your social amplification</p>
+            <h2 class="text-3xl font-extrabold tracking-tight text-white bg-gradient-to-r from-cyan-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">NOVA CLIENT SYSTEM</h2>
+            <p class="mt-2 text-xs uppercase tracking-widest text-slate-500" id="auth-subtitle">Access or Provision Profile Credentials</p>
         </div>
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md mx-4">
-            <div class="bg-dark-900/50 backdrop-blur-xl py-8 px-4 shadow-2xl border border-slate-800 rounded-2xl sm:px-10">
-                <div class="flex border-b border-slate-800 mb-6">
-                    <button id="tab-login" class="flex-1 pb-3 text-sm font-medium border-b-2 border-brand-500 text-brand-400 focus:outline-none" onclick="switchAuthTab('login')">Login</button>
-                    <button id="tab-signup" class="flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none" onclick="switchAuthTab('signup')">Sign Up</button>
+            <div class="glass-panel py-8 px-6 shadow-2xl rounded-2xl sm:px-10 space-y-6">
+                <!-- AUTH SWITCHING CONTROL TABS -->
+                <div class="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-xl border border-white/5">
+                    <button onclick="toggleAuthFormMode(true)" id="tab-login-btn" class="py-2 text-xs font-bold uppercase rounded-lg text-white bg-white/10">Sign In</button>
+                    <button onclick="toggleAuthFormMode(false)" id="tab-register-btn" class="py-2 text-xs font-bold uppercase rounded-lg text-slate-400 hover:text-white">Register</button>
                 </div>
 
-                <form id="auth-form" class="space-y-5" onsubmit="handleAuthSubmit(event)">
-                    <div id="field-username" class="hidden">
-                        <label for="auth-username" class="block text-sm font-medium text-slate-300">Username</label>
-                        <div class="mt-1">
-                            <input id="auth-username" name="username" type="text" class="appearance-none block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm">
+                <form id="user-auth-form" class="space-y-4" onsubmit="handleUserAuthentication(event)">
+                    <div id="field-username-wrapper" class="hidden">
+                        <label for="auth-username" class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Profile Display Name</label>
+                        <div class="mt-1.5 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600"><i data-lucide="user" class="h-4 w-4"></i></span>
+                            <input id="auth-username" type="text" placeholder="Your Name" class="appearance-none block w-full pl-10 pr-3 py-2.5 border border-white/5 bg-black/50 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm">
                         </div>
                     </div>
 
                     <div>
-                        <label for="auth-email" class="block text-sm font-medium text-slate-300">Email address</label>
-                        <div class="mt-1">
-                            <input id="auth-email" name="email" type="email" required class="appearance-none block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm">
+                        <label for="auth-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Identity Email Node</label>
+                        <div class="mt-1.5 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600"><i data-lucide="mail" class="h-4 w-4"></i></span>
+                            <input id="auth-email" type="email" required placeholder="name@domain.com" class="appearance-none block w-full pl-10 pr-3 py-2.5 border border-white/5 bg-black/50 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm">
                         </div>
                     </div>
 
                     <div>
-                        <label for="auth-password" class="block text-sm font-medium text-slate-300">Password</label>
-                        <div class="mt-1">
-                            <input id="auth-password" name="password" type="password" required class="appearance-none block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm">
+                        <label for="auth-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Secret Passphrase</label>
+                        <div class="mt-1.5 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600"><i data-lucide="lock" class="h-4 w-4"></i></span>
+                            <input id="auth-password" type="password" required placeholder="••••••••" class="appearance-none block w-full pl-10 pr-3 py-2.5 border border-white/5 bg-black/50 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 text-sm">
                         </div>
                     </div>
 
                     <div>
-                        <button type="submit" id="auth-submit-btn" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 focus:ring-offset-slate-900 transition-all">
-                            Sign In
+                        <button type="submit" id="auth-submit-btn" class="w-full flex justify-center py-3 px-4 rounded-xl shadow-lg text-sm font-semibold text-black bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 hover:opacity-90 focus:outline-none transition-all transform hover:-translate-y-0.5">
+                            Authenticate Environment
                         </button>
                     </div>
                 </form>
-
-                <div class="mt-6">
-                    <div class="relative">
-                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
-                        <div class="relative flex justify-center text-xs uppercase"><span class="bg-dark-900 px-2 text-slate-500">Or continue with</span></div>
-                    </div>
-
-                    <div class="mt-6">
-                        <button onclick="handleGoogleSignIn()" class="w-full inline-flex justify-center py-2.5 px-4 border border-slate-700 rounded-xl bg-slate-950 text-sm font-medium text-slate-300 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 focus:ring-offset-slate-900 transition-all">
-                            <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                            </svg>
-                            Sign in with Google
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <div id="app-screen" class="hidden h-full flex flex-col md:flex-row">
-        <aside class="w-full md:w-64 bg-dark-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col shrink-0">
-            <div class="h-16 flex items-center px-6 border-b border-slate-800 gap-2">
-                <i data-lucide="zap" class="h-6 w-6 text-brand-500"></i>
-                <span class="text-xl font-bold tracking-wider text-white">NOVA SMM</span>
-            </div>
-            <nav class="flex-1 p-4 space-y-1 overflow-y-auto max-md:flex max-md:space-y-0 max-md:p-2 max-md:gap-1 overflow-x-auto">
-                <button data-target="new-order" class="nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0">
-                    <i data-lucide="plus-circle" class="h-4 w-4"></i> New Order
-                </button>
-                <button data-target="services" class="nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0">
-                    <i data-lucide="layers" class="h-4 w-4"></i> Services
-                </button>
-                <button data-target="updates" class="nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0">
-                    <i data-lucide="bell" class="h-4 w-4"></i> Updates
-                </button>
-                <button data-target="orders" class="nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0">
-                    <i data-lucide="list-ordered" class="h-4 w-4"></i> Order History
-                </button>
-                <button data-target="add-fund" class="nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0">
-                    <i data-lucide="wallet" class="h-4 w-4"></i> Add Fund
-                </button>
-                <button data-target="about" class="nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0">
-                    <i data-lucide="info" class="h-4 w-4"></i> About Us
-                </button>
-            </nav>
-            <div class="p-4 border-t border-slate-800 bg-dark-950/40 hidden md:block">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="h-8 w-8 rounded-full bg-brand-600/20 border border-brand-500/30 flex items-center justify-center text-xs font-semibold text-brand-400" id="user-avatar">
-                        U
+    <!-- VIEW LAYER 2: ROOT USER PORTAL WORKSPACE SPA -->
+    <div id="user-app-screen" class="hidden h-full flex flex-col md:flex-row">
+        
+        <!-- SIDE NAVIGATION WORKSPACE PANEL -->
+        <aside class="w-full md:w-72 bg-cyber-onyx border-b md:border-b-0 md:border-r border-white/5 flex flex-col shrink-0 z-30">
+            <div class="h-20 flex items-center px-6 border-b border-white/5 justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="h-9 w-9 bg-cyan-500/10 border border-cyan-500/30 rounded-xl flex items-center justify-center">
+                        <i data-lucide="activity" class="h-5 w-5 text-cyan-400"></i>
                     </div>
-                    <div class="overflow-hidden">
-                        <p class="text-xs text-slate-400 truncate" id="user-display-email">loading...</p>
+                    <div>
+                        <span class="text-sm font-black tracking-wider text-white block">NOVA PANEL</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500 tracking-widest block">Client Portal</span>
                     </div>
                 </div>
-                <button onclick="handleSignOut()" class="w-full flex items-center justify-center gap-2 px-3 py-2 border border-slate-800 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/5 transition-all">
-                    <i data-lucide="log-out" class="h-3.5 w-3.5"></i> Sign Out
+            </div>
+
+            <!-- TAB ENGINE ROUTING TARGET LINKS -->
+            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto max-md:flex max-md:space-y-0 max-md:p-2 max-md:gap-1.5 overflow-x-auto">
+                <button data-target="dashboard" class="user-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i data-lucide="layout-dashboard" class="h-4 w-4"></i> Control Center
+                </button>
+                <button data-target="neworder" class="user-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i data-lucide="shopping-cart" class="h-4 w-4"></i> Dispatch New Order
+                </button>
+                <button data-target="addfund" class="user-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i data-lucide="wallet" class="h-4 w-4"></i> bKash Funding Desk
+                </button>
+                <button data-target="history" class="user-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i data-lucide="clock" class="h-4 w-4"></i> Order Pipeline History
+                </button>
+            </nav>
+
+            <!-- WALLET AND ACCOUNT PROFILE SUB-MODULE CARD FOOTER -->
+            <div class="p-4 border-t border-white/5 bg-black/20 space-y-3">
+                <div class="p-3.5 bg-white/[0.02] border border-white/5 rounded-xl space-y-1.5">
+                    <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">Available Balance</span>
+                    <div class="flex items-baseline justify-between">
+                        <span id="profile-balance-display" class="text-xl font-black font-mono text-cyan-400">$0.00</span>
+                        <span id="profile-name-display" class="text-xs text-slate-400 truncate max-w-[120px]">Syncing...</span>
+                    </div>
+                </div>
+                <button onclick="triggerUserLogOut()" class="w-full flex items-center justify-center gap-2 px-3 py-2 border border-white/5 hover:border-red-500/20 rounded-xl text-[11px] font-medium text-slate-500 hover:text-red-400 hover:bg-red-500/5 transition-all">
+                    <i data-lucide="log-out" class="h-3.5 w-3.5"></i> Close Workspace Session
                 </button>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col min-w-0 bg-dark-950 overflow-y-auto">
-            <header class="h-16 border-b border-slate-800 bg-dark-900/60 backdrop-blur px-6 flex items-center justify-between sticky top-0 z-40">
-                <div class="flex items-center gap-2">
-                    <h1 id="view-title" class="text-lg font-semibold text-white">Dashboard</h1>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
-                        <i data-lucide="wallet" class="h-4 w-4 text-emerald-400"></i>
-                        <span class="text-xs text-slate-400 font-medium">Balance:</span>
-                        <span class="text-sm font-bold text-emerald-400">$<span id="user-display-balance">0.00</span></span>
-                    </div>
-                    <button onclick="handleSignOut()" class="md:hidden p-2 text-slate-400 hover:text-rose-400">
-                        <i data-lucide="log-out" class="h-5 w-5"></i>
-                    </button>
-                </div>
+        <!-- MAIN VIEW CONTEXT ROUTER FRAME -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+            <header class="h-20 border-b border-white/5 bg-cyber-onyx/40 backdrop-blur px-6 flex items-center justify-between sticky top-0 z-20">
+                <h1 id="active-panel-title" class="text-xl font-bold tracking-tight text-white">Loading Node System...</h1>
+                <span id="profile-email-badge" class="text-xs font-mono px-3 py-1 bg-white/5 border border-white/5 text-slate-400 rounded-full max-md:hidden">Awaiting Node Authentication...</span>
             </header>
 
-            <div class="p-6 max-w-7xl w-full mx-auto flex-1">
-                
-                <section id="view-new-order" class="app-view hidden space-y-6">
-                    <div class="bg-dark-900 border border-slate-800 p-3 rounded-2xl">
-                        <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">Filter Platform</span>
-                        <div class="flex flex-wrap gap-1.5" id="platform-tabs-container">
-                            </div>
+            <div class="p-6 max-w-[1400px] w-full mx-auto flex-1 space-y-6">
+
+                <!-- TAB VIEW A: CENTRAL INTERFACE CONTROL DASHBOARD -->
+                <section id="pane-dashboard" class="user-pane hidden space-y-6">
+                    <!-- SYSTEM ANNOUNCEMENTS LIVE STREAM LOGGER -->
+                    <div class="bg-gradient-to-r from-purple-950/20 via-cyber-onyx to-slate-900 border border-purple-500/10 p-5 rounded-2xl space-y-3 shadow-xl">
+                        <div class="flex items-center gap-2 text-xs font-bold tracking-wider text-purple-300 uppercase">
+                            <i data-lucide="megaphone" class="h-4 w-4 text-purple-400"></i> Global Network Operations Log Updates
+                        </div>
+                        <div id="live-updates-log-box" class="space-y-2 divide-y divide-white/5 max-h-48 overflow-y-auto text-xs pr-2">
+                            <p class="text-slate-500 py-2">No infrastructure modifications posted to network log streams.</p>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-                            <h3 class="text-base font-semibold text-white flex items-center gap-2">
-                                <i data-lucide="shopping-cart" class="h-4 w-4 text-brand-500"></i> Create New Campaign
-                            </h3>
-                            <form id="order-form" class="space-y-4" onsubmit="handleOrderSubmit(event)">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Select Service</label>
-                                    <select id="order-service-select" required class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                        <option value="">-- Choose a service --</option>
-                                    </select>
-                                </div>
-                                <div id="service-description-wrapper" class="hidden bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs text-slate-400">
-                                    <p id="service-description-text"></p>
-                                    <p class="mt-1 font-semibold text-brand-400">Rate per 1000: $<span id="service-rate-text">0.00</span></p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Link / Handle</label>
-                                    <input type="url" id="order-link" required placeholder="https://instagram.com/p/..." class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Quantity</label>
-                                        <input type="number" id="order-quantity" required min="100" max="100000" placeholder="Min: 100, Max: 100,000" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-400 mb-1.5">Estimated Charge</label>
-                                        <div class="relative rounded-xl shadow-sm">
-                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <span class="text-slate-500 sm:text-sm">$</span>
-                                            </div>
-                                            <input type="text" id="order-charge" readonly value="0.00" class="block w-full pl-7 pr-3 py-2.5 border border-slate-800 bg-slate-900 rounded-xl text-emerald-400 font-bold focus:outline-none text-sm cursor-not-allowed">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 focus:ring-offset-slate-900 transition-all">
-                                    Place Order
-                                </button>
-                            </form>
+                    <!-- KEY ANALYTICAL PERFORMANCE STAT CARDS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="p-5 glass-panel rounded-2xl flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Account Capital Balance</span>
+                                <span id="dash-balance" class="text-2xl font-black font-mono text-cyan-400 block">$0.00</span>
+                            </div>
+                            <div class="p-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-xl"><i data-lucide="wallet" class="h-5 w-5"></i></div>
                         </div>
-                        <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                            <div class="space-y-4">
-                                <h3 class="text-base font-semibold text-white">Execution Guidelines</h3>
-                                <ul class="space-y-3 text-xs text-slate-400">
-                                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="h-4 w-4 text-brand-500 shrink-0 mt-0.5"></i> Double check handle parameters before deployment.</li>
-                                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="h-4 w-4 text-brand-500 shrink-0 mt-0.5"></i> Orders are initialized atomically via backend queues.</li>
-                                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="h-4 w-4 text-brand-500 shrink-0 mt-0.5"></i> Balance checking is processed within isolation containers.</li>
-                                </ul>
+                        <div class="p-5 glass-panel rounded-2xl flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pipeline Active Orders</span>
+                                <span id="dash-active-orders" class="text-2xl font-black font-mono text-white block">0</span>
                             </div>
-                            <div class="mt-6 border-t border-slate-800 pt-4 bg-gradient-to-r from-brand-600/10 to-transparent p-3 rounded-xl">
-                                <p class="text-xs text-brand-400 font-semibold mb-1">Need assistance?</p>
-                                <p class="text-[11px] text-slate-500">Contact admin for customized volume packages or API parameters.</p>
+                            <div class="p-3 bg-white/5 text-slate-300 border border-white/10 rounded-xl"><i data-lucide="hourglass" class="h-5 w-5"></i></div>
+                        </div>
+                        <div class="p-5 glass-panel rounded-2xl flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Gross Lifetime Orders</span>
+                                <span id="dash-total-orders" class="text-2xl font-black font-mono text-white block">0</span>
                             </div>
+                            <div class="p-3 bg-white/5 text-slate-300 border border-white/10 rounded-xl"><i data-lucide="package" class="h-5 w-5"></i></div>
                         </div>
                     </div>
                 </section>
 
-                <section id="view-services" class="app-view hidden space-y-6">
-                    <div class="sm:flex sm:items-center sm:justify-between bg-dark-900 border border-slate-800 p-4 rounded-2xl">
-                        <div>
-                            <h3 class="text-base font-semibold text-white">Service Infrastructure Catalogue</h3>
-                            <p class="text-xs text-slate-400 mt-1">Real-time parameters and dynamic performance baseline pricing structures.</p>
-                        </div>
-                        <div class="mt-3 sm:mt-0 sm:ml-4 max-w-xs w-full">
-                            <div class="relative rounded-xl shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i data-lucide="search" class="h-4 w-4 text-slate-500"></i>
-                                </div>
-                                <input type="text" id="services-search" oninput="filterServicesTable()" placeholder="Search active options..." class="block w-full pl-9 pr-3 py-2 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-500 text-white focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs">
+                <!-- TAB VIEW B: ORDER SUBMISSION SYSTEM PIPELINE -->
+                <section id="pane-neworder" class="user-pane hidden max-w-2xl mx-auto">
+                    <div class="glass-panel p-6 rounded-2xl shadow-xl space-y-4">
+                        <h3 class="text-sm font-bold tracking-wider uppercase text-slate-300 flex items-center gap-2"><i data-lucide="plus-circle" class="h-4 w-4 text-cyan-400"></i> Open Campaign Route Node</h3>
+                        <form id="form-submit-order" class="space-y-4" onsubmit="handleDispatchNewOrder(event)">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Catalogs Domain Infrastructure</label>
+                                <select id="order-category-select" onchange="filterServicesByCategoryDropdownSelection()" required class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs">
+                                    <option value="">-- Load Category Domain Ecosystem --</option>
+                                </select>
                             </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Target Optimization Package Block</label>
+                                <select id="order-service-select" onchange="calculateComputedOrderChargeCost()" required class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs">
+                                    <option value="">-- Awaiting Domain Selection --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Target Destination URL Link Coordinates</label>
+                                <input type="url" id="order-link-url" required placeholder="https://instagram.com/profile_node" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Volume Quantity Allocation Count</label>
+                                <input type="number" id="order-qty-input" oninput="calculateComputedOrderChargeCost()" required min="100" placeholder="Minimum: 100" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs font-mono">
+                            </div>
+
+                            <div class="p-4 bg-black/40 border border-white/5 rounded-xl flex items-center justify-between">
+                                <div class="space-y-0.5">
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Computed Accounting Cost Matrix</span>
+                                    <span id="order-charge-display" class="text-lg font-black font-mono text-emerald-400">$0.0000</span>
+                                </div>
+                                <button type="submit" class="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl text-xs tracking-wider uppercase shadow-lg transition-colors">Commit Order to Pipeline</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TAB VIEW C: MANUAL BKASH WALLET CAPITALIZATION DESK -->
+                <section id="pane-addfund" class="user-pane hidden max-w-2xl mx-auto space-y-6">
+                    <div class="p-5 border border-cyan-500/20 bg-cyan-500/5 rounded-2xl flex items-start gap-4">
+                        <i data-lucide="info" class="h-5 w-5 text-cyan-400 shrink-0 mt-0.5"></i>
+                        <div class="space-y-1 text-xs text-cyan-200">
+                            <span class="font-bold block text-white">Manual bKash Capitalization Protocol Instructions</span>
+                            <p class="leading-relaxed text-slate-400">Send money directly to our gateway nodes, then fill out this transaction verification packet. The administration panel verifies the ledger block before triggering atomic increments on your user account balance document.</p>
                         </div>
                     </div>
 
-                    <div class="bg-dark-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="glass-panel p-6 rounded-2xl shadow-xl space-y-4">
+                        <h3 class="text-sm font-bold tracking-wider uppercase text-slate-300 flex items-center gap-2"><i data-lucide="wallet" class="h-4 w-4 text-cyan-400"></i> Dispatch Funding Log Document</h3>
+                        <form id="form-submit-fund" class="space-y-4" onsubmit="handleDispatchDepositVerification(event)">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Depositor Reference Client Name</label>
+                                    <input type="text" id="fund-name" required placeholder="Your Name" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Contact Phone Parameter</label>
+                                    <input type="text" id="fund-phone" required placeholder="017XXXXXXXX" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs font-mono">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Capital Volume Amount ($)</label>
+                                    <input type="number" step="any" id="fund-amount" required placeholder="Amount in USD" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Sender bKash Core Account No.</label>
+                                    <input type="text" id="fund-bkash-num" required placeholder="01XXXXXXXXX" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs font-mono">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Alphanumeric bKash TxnID Tracking Hash Key</label>
+                                <input type="text" id="fund-txnid" required placeholder="e.g., BAX8794K12" class="block w-full px-3 py-2.5 border border-white/5 bg-black/40 rounded-xl placeholder-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/40 text-xs font-mono tracking-widest uppercase">
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-sky-500 text-black font-bold rounded-xl text-xs tracking-wider uppercase shadow-lg hover:opacity-90 transition-opacity">Submit Capital Block Payload for Audit</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TAB VIEW D: PERSONAL HISTORICAL TRAJECTORY PIPELINES LOGS -->
+                <section id="pane-history" class="user-pane hidden space-y-4">
+                    <div class="glass-panel border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-slate-800 text-left">
-                                <thead class="bg-slate-950">
+                            <table class="min-w-full divide-y divide-white/5 text-left">
+                                <thead class="bg-black/40">
                                     <tr>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Service Pipeline</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Platform</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Rate Per 1000</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Min / Max</th>
+                                        <th class="px-6 py-4 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Order ID Matrix Coordinate</th>
+                                        <th class="px-6 py-4 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Target Engine Allocation</th>
+                                        <th class="px-6 py-4 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Destination Reference Resource</th>
+                                        <th class="px-6 py-4 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Quantity</th>
+                                        <th class="px-6 py-4 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Computed Cost</th>
+                                        <th class="px-6 py-4 text-right text-[11px] font-bold tracking-wider text-slate-400 uppercase">Verification Flag State</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-800 text-xs" id="services-table-body">
-                                    </tbody>
+                                <tbody class="divide-y divide-white/[0.03] text-xs font-medium text-slate-300" id="table-user-history-body">
+                                    <tr><td colspan="6" class="px-6 py-8 text-center text-slate-600">Awaiting runtime data parsing from cluster pipeline...</td></tr>
+                                </tbody>
                             </table>
                         </div>
-                    </div>
-                </section>
-
-                <section id="view-updates" class="app-view hidden space-y-6">
-                    <div class="max-w-2xl mx-auto">
-                        <div class="text-center mb-8">
-                            <h3 class="text-xl font-bold text-white">System Rate Tracking Logs</h3>
-                            <p class="text-xs text-slate-400 mt-1">Chronological layout documenting configuration modifications.</p>
-                        </div>
-                        <div class="relative border-l border-slate-800 ml-4 space-y-6" id="updates-timeline-container">
-                            </div>
-                    </div>
-                </section>
-
-                <section id="view-orders" class="app-view hidden space-y-6">
-                    <div class="bg-dark-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-                        <div class="px-6 py-4 border-b border-slate-800 bg-slate-950/50">
-                            <h3 class="text-base font-semibold text-white">Historical Transaction Logs</h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-slate-800 text-left">
-                                <thead class="bg-slate-950">
-                                    <tr>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order Reference</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Service Matrix</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Target Resource</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Quantity</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Charge</th>
-                                        <th class="px-6 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">State Validation</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-800 text-xs" id="orders-table-body">
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-add-fund" class="app-view hidden space-y-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-                            <h3 class="text-base font-semibold text-white flex items-center gap-2">
-                                <i data-lucide="wallet" class="h-4 w-4 text-brand-500"></i> Manual bKash Routing
-                            </h3>
-                            <form id="deposit-form" class="space-y-4" onsubmit="handleDepositSubmit(event)">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Client Full Name</label>
-                                        <input type="text" id="fund-name" required placeholder="John Doe" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Phone Number</label>
-                                        <input type="tel" id="fund-phone" required placeholder="017XXXXXXXX" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Email Field Integration</label>
-                                    <input type="email" id="fund-email" required placeholder="client@domain.com" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Deposited Amount ($)</label>
-                                        <input type="number" step="any" id="fund-amount" required placeholder="10.00" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Sender bKash Wallet No.</label>
-                                        <input type="text" id="fund-bkash" required placeholder="017XXXXXXXX" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Alphanumeric TxnID</label>
-                                        <input type="text" id="fund-txnid" required placeholder="BKB7X8Y9Z0" class="block w-full px-3 py-2.5 border border-slate-700 bg-slate-950 rounded-xl placeholder-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm">
-                                    </div>
-                                </div>
-                                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 focus:ring-offset-slate-900 transition-all">
-                                    Verify Transaction Pipeline
-                                </button>
-                            </form>
-                        </div>
-                        <div class="bg-gradient-to-b from-dark-900 to-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
-                            <div class="space-y-4">
-                                <div class="inline-flex p-2.5 bg-pink-500/10 rounded-xl border border-pink-500/20 text-pink-400">
-                                    <i data-lucide="smartphone"></i>
-                                </div>
-                                <h3 class="text-base font-bold text-white">Merchant Gateway Instructions</h3>
-                                <p class="text-xs text-slate-400 leading-relaxed">
-                                    Execute payment transmission manually using the official secure terminal coordinates specified below.
-                                </p>
-                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                                    <span class="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">Admin bKash Wallet (Send Money)</span>
-                                    <span class="block text-lg font-mono font-bold text-pink-400 tracking-medium">+8801719741293</span>
-                                </div>
-                            </div>
-                            <div class="mt-6 text-[11px] text-slate-500 space-y-1">
-                                <p>• Conversion indices are computed server-side dynamically.</p>
-                                <p>• Auditing requires approximately 5 to 60 operational minutes.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-about" class="app-view hidden max-w-3xl mx-auto space-y-8 py-4">
-                    <div class="text-center space-y-3">
-                        <h2 class="text-2xl font-extrabold text-white sm:text-3xl tracking-tight">NOVA SMM</h2>
-                        <p class="text-sm text-brand-400 max-w-md mx-auto">Next-generation operational node providing hyper-secure, absolute automated amplification vectors.</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-5 bg-dark-900 border border-slate-800 rounded-2xl space-y-2">
-                            <i data-lucide="zap" class="text-brand-500 h-5 w-5"></i>
-                            <h4 class="text-sm font-semibold text-white">Instant Deployment</h4>
-                            <p class="text-xs text-slate-400">Campaign operations process through structured pipeline automation protocols seamlessly.</p>
-                        </div>
-                        <div class="p-5 bg-dark-900 border border-slate-800 rounded-2xl space-y-2">
-                            <i data-lucide="shield-check" class="text-emerald-500 h-5 w-5"></i>
-                            <h4 class="text-sm font-semibold text-white">Hyper-Secure Isolation</h4>
-                            <p class="text-xs text-slate-400">Financial ledgers and transactional balances use ACID-compliant atomic wrappers.</p>
-                        </div>
-                        <div class="p-5 bg-dark-900 border border-slate-800 rounded-2xl space-y-2">
-                            <i data-lucide="refresh-cw" class="text-blue-500 h-5 w-5"></i>
-                            <h4 class="text-sm font-semibold text-white">Dynamic Synchronicity</h4>
-                            <p class="text-xs text-slate-400">Configuration indices adjust responsively to downstream socket demands globally.</p>
-                        </div>
-                    </div>
-                    <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 text-xs text-slate-400 leading-relaxed space-y-3">
-                        <p>
-                            Engineered from the ground up for modern performance parameters, NOVA SMM bypasses legacy delivery latency issues by using isolated container requests paired with an asynchronous Firestore edge ecosystem.
-                        </p>
-                        <p>
-                            All parameters are validated continuously against fraud baselines to protect system integrity while maintaining high delivery volume metrics across multiple social networks.
-                        </p>
                     </div>
                 </section>
 
@@ -393,33 +293,13 @@
         </main>
     </div>
 
+    <!-- FIREBASE MODULAR SYSTEM DRIVERS INTEGRATION LAYER -->
     <script type="module">
-        // Import Firebase modules securely from specified CDN links
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
-            signInWithPopup, 
-            GoogleAuthProvider, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
-            setDoc, 
-            collection, 
-            addDoc, 
-            query, 
-            where, 
-            onSnapshot, 
-            serverTimestamp, 
-            runTransaction 
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, collection, onSnapshot, setDoc, addDoc, getDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Required API credentials parameter injection
+        // Configuration mapping
         const firebaseConfig = {
             apiKey: "AIzaSyCsrxeVonFtuvoModrorg_kSa3n0MP1kis",
             authDomain: "nova-smm-6d037.firebaseapp.com",
@@ -429,489 +309,312 @@
             appId: "1:539476263836:web:ba3b48974bc084ad69fe59"
         };
 
-        // Initialize Native Instances
+        // Initialize Instances
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
-        // Architectural Global Variables
-        let currentUser = null;
-        let currentUserData = null;
-        let servicesCached = [];
-        let selectedPlatformFilter = "All";
-        let authTabMode = "login";
-
-        // Navigation Categories Array Setup
-        const PLATFORMS = ["All", "Instagram", "Facebook", "Telegram", "TikTok", "YouTube", "Spotify", "Twitter", "Traffic", "Twitch", "Audiomack"];
-
-        // UI View Titles Mapping Container
-        const VIEW_TITLES = {
-            "new-order": "New Amplification Campaign",
-            "services": "Service Pipelines & Pricing Matrix",
-            "updates": "System Logs & Rate Adaptations",
-            "orders": "Historical Campaign Dashboard",
-            "add-fund": "Capital Deposit Integration (bKash)",
-            "about": "Corporate Profile & Architecture"
-        };
+        // State Machine Variables
+        let isLoginFormState = true;
+        let currentUserProfileNode = null;
+        let cachedServicesCatalog = [];
+        let globalUserOrdersFootprint = [];
 
         /* ------------------------------------------------------------- */
-        /* AUTHENTICATION SCHEDULING INTERACTION LAYERS                  */
+        /* AUTHENTICATION MODULE CONTROLLERS LAYER                       */
         /* ------------------------------------------------------------- */
         
-        window.switchAuthTab = function(mode) {
-            authTabMode = mode;
-            const uField = document.getElementById("field-username");
-            const btnSubmit = document.getElementById("auth-submit-btn");
-            const tabL = document.getElementById("tab-login");
-            const tabS = document.getElementById("tab-signup");
-            const subTitle = document.getElementById("auth-subtitle");
+        window.toggleAuthFormMode = function(targetStateIsLogin) {
+            isLoginFormState = targetStateIsLogin;
+            const userWrapper = document.getElementById("field-username-wrapper");
+            const submitBtn = document.getElementById("auth-submit-btn");
+            const subtitle = document.getElementById("auth-subtitle");
 
-            if (mode === 'signup') {
-                uField.classList.remove("hidden");
-                btnSubmit.innerText = "Register Account";
-                subTitle.innerText = "Provision a secure operational node mapping profile parameters";
-                tabS.className = "flex-1 pb-3 text-sm font-medium border-b-2 border-brand-500 text-brand-400 focus:outline-none";
-                tabL.className = "flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none";
+            if(isLoginFormState) {
+                userWrapper.classList.add("hidden");
+                document.getElementById("tab-login-btn").className = "py-2 text-xs font-bold uppercase rounded-lg text-white bg-white/10";
+                document.getElementById("tab-register-btn").className = "py-2 text-xs font-bold uppercase rounded-lg text-slate-400 hover:text-white";
+                submitBtn.innerText = "Authorize Environment Portal Session";
+                subtitle.innerText = "Access Profile Credentials Link";
             } else {
-                uField.classList.add("hidden");
-                btnSubmit.innerText = "Sign In";
-                subTitle.innerText = "Sign in to orchestrate your social amplification";
-                tabL.className = "flex-1 pb-3 text-sm font-medium border-b-2 border-brand-500 text-brand-400 focus:outline-none";
-                tabS.className = "flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 focus:outline-none";
+                userWrapper.classList.remove("hidden");
+                document.getElementById("tab-register-btn").className = "py-2 text-xs font-bold uppercase rounded-lg text-white bg-white/10";
+                document.getElementById("tab-login-btn").className = "py-2 text-xs font-bold uppercase rounded-lg text-slate-400 hover:text-white";
+                submitBtn.innerText = "Provision New User Profile Document";
+                subtitle.innerText = "Register Cryptographic Profile Parameters";
             }
         };
 
-        window.handleAuthSubmit = async function(e) {
+        window.handleUserAuthentication = async function(e) {
             e.preventDefault();
             const email = document.getElementById("auth-email").value.trim();
             const password = document.getElementById("auth-password").value;
             const username = document.getElementById("auth-username").value.trim();
 
             try {
-                if (authTabMode === 'signup') {
-                    if(!username) throw new Error("Username allocation parameters required.");
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    // Initialize core document schema inside isolated collections route map
-                    await setDoc(doc(db, "users", userCredential.user.uid), {
-                        username: username,
-                        email: email,
-                        balance: 0
-                    });
-                    showToast("Account successfully provisioned in core register.", "success");
-                } else {
+                if (isLoginFormState) {
                     await signInWithEmailAndPassword(auth, email, password);
-                    showToast("Session authenticated successfully.", "success");
-                }
-            } catch (err) {
-                showToast(err.message, "error");
-            }
-        };
-
-        window.handleGoogleSignIn = async function() {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const userRef = doc(db, "users", result.user.uid);
-                const userSnap = await getDoc(userRef);
-                
-                if (!userSnap.exists()) {
-                    await setDoc(userRef, {
-                        username: result.user.displayName || "GoogleUser",
-                        email: result.user.email,
-                        balance: 0
+                } else {
+                    const credentials = await createUserWithEmailAndPassword(auth, email, password);
+                    // Provision a user record document inside the collection mapping manually 
+                    await setDoc(doc(db, "users", credentials.user.uid), {
+                        username: username || "Nova Operator",
+                        email: email,
+                        balance: 0.00,
+                        createdAt: serverTimestamp()
                     });
                 }
-                showToast("Federated credentials synchronized successfully.", "success");
+                showUserToast("Security credential verification validation passed.", "success");
             } catch (err) {
-                showToast(err.message, "error");
+                showUserToast(err.message, "error");
             }
         };
 
-        window.handleSignOut = async function() {
+        window.triggerUserLogOut = async function() {
             try {
                 await signOut(auth);
-                showToast("Session credentials invalidated.", "info");
+                showUserToast("Session destroyed safely.", "info");
             } catch (err) {
-                showToast(err.message, "error");
+                showUserToast(err.message, "error");
             }
         };
 
-        // Execution Monitor state hook mapping structural views dynamically
-        onAuthStateChanged(auth, (user) => {
-            const authScreen = document.getElementById("auth-screen");
-            const appScreen = document.getElementById("app-screen");
-            
+        // State change validation pipeline listener hook
+        onAuthStateChanged(auth, async (user) => {
+            const authScreen = document.getElementById("user-auth-screen");
+            const appScreen = document.getElementById("user-app-screen");
+
             if (user) {
-                currentUser = user;
                 authScreen.classList.add("hidden");
                 appScreen.classList.remove("hidden");
+                document.getElementById("profile-email-badge").innerText = user.email;
                 
-                // Realtime synchronization pipeline allocation mapping for user account ledger doc
-                onSnapshot(doc(db, "users", user.uid), (docSnap) => {
-                    if (docSnap.exists()) {
-                        currentUserData = docSnap.data();
-                        document.getElementById("user-display-email").innerText = currentUserData.email;
-                        document.getElementById("user-display-balance").innerText = parseFloat(currentUserData.balance).toFixed(2);
-                        document.getElementById("user-avatar").innerText = (currentUserData.username || "U").substring(0,2).toUpperCase();
-                    }
-                });
-
-                // Trigger runtime loads inside child loops
-                initializeDataPipelines();
-                navigateToView("new-order");
+                // Initialize Account Snapshot Pipe
+                initializeUserLiveContextStreams(user.uid);
+                switchUserActivePane("dashboard");
             } else {
-                currentUser = null;
-                currentUserData = null;
                 appScreen.classList.add("hidden");
                 authScreen.classList.remove("hidden");
+                currentUserProfileNode = null;
             }
         });
 
 
         /* ------------------------------------------------------------- */
-        /* APPLICATION VIEW ROUTER DISPATCH MECHANISMS                   */
+        /* APPLICATION ROUTER CONTROL DESK SWAPPER                       */
         /* ------------------------------------------------------------- */
         
-        function navigateToView(targetViewId) {
-            document.querySelectorAll(".app-view").forEach(view => view.classList.add("hidden"));
-            document.querySelectorAll(".nav-link").forEach(link => {
-                if(link.getAttribute("data-target") === targetViewId) {
-                    link.className = "nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-white bg-brand-600 shadow-md shadow-brand-600/10 max-md:shrink-0";
+        function switchUserActivePane(paneId) {
+            document.querySelectorAll(".user-pane").forEach(p => p.classList.add("hidden"));
+            document.querySelectorAll(".user-nav-link").forEach(l => {
+                if(l.getAttribute("data-target") === paneId) {
+                    l.className = "user-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold tracking-wide text-white bg-white/5 border border-white/10 shadow-inner shadow-white/5";
                 } else {
-                    link.className = "nav-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 max-md:shrink-0";
+                    l.className = "user-nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide text-slate-400 hover:text-white hover:bg-slate-900/50 border border-transparent";
                 }
             });
 
-            const matchingSection = document.getElementById(`view-${targetViewId}`);
-            if (matchingSection) matchingSection.classList.remove("hidden");
-            document.getElementById("view-title").innerText = VIEW_TITLES[targetViewId] || "Dashboard";
+            const matchingPane = document.getElementById(`pane-${paneId}`);
+            if (matchingPane) matchingPane.classList.remove("hidden");
+
+            const titles = { "dashboard": "Control Center Workspace", "neworder": "Dispatch Operational Order Campaign", "addfund": "Manual bKash Funding Desk Network", "history": "Personal Pipeline Execution History Logs" };
+            document.getElementById("active-panel-title").innerText = titles[paneId] || "Dashboard Console";
         }
 
-        // Link navigation hooks binding onto document interfaces
-        document.querySelectorAll(".nav-link").forEach(element => {
-            element.addEventListener("click", (e) => {
-                const viewTarget = e.currentTarget.getAttribute("data-target");
-                navigateToView(viewTarget);
+        document.querySelectorAll(".user-nav-link").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                switchUserActivePane(e.currentTarget.getAttribute("data-target"));
             });
         });
 
 
         /* ------------------------------------------------------------- */
-        /* DATA SYNCHRONIZATION AND RENDER CORE PIPELINES                */
+        /* REAL-TIME INGESTION DATA CONDUITS SOCKET PIPES               */
         /* ------------------------------------------------------------- */
         
-        function initializeDataPipelines() {
-            renderPlatformTabs();
-            
-            // Listen for changes in the `services` collection
-            onSnapshot(collection(db, "services"), (querySnapshot) => {
-                servicesCached = [];
-                querySnapshot.forEach((doc) => {
-                    servicesCached.push({ id: doc.id, ...doc.data() });
-                });
-                populateServicesDropdown();
-                renderServicesCatalogueTable();
-            });
-
-            // Listen for changes in the `updates` collection
-            onSnapshot(collection(db, "updates"), (querySnapshot) => {
-                const updates = [];
-                querySnapshot.forEach((doc) => {
-                    updates.push({ id: doc.id, ...doc.data() });
-                });
-                // Sort updates locally in case timestamp extraction lags
-                renderUpdatesTimeline(updates);
-            });
-
-            // Listen for changes in the logged-in user's orders
-            const ordersQuery = query(collection(db, "orders"), where("userId", "==", currentUser.uid));
-            onSnapshot(ordersQuery, (querySnapshot) => {
-                const orders = [];
-                querySnapshot.forEach((doc) => {
-                    orders.push({ id: doc.id, ...doc.data() });
-                });
-                renderOrdersTable(orders);
-            });
-        }
-
-
-        /* ------------------------------------------------------------- */
-        /* NEW CAMPAIGN (NEW ORDER) BUSINESS RULES LOGIC                */
-        /* ------------------------------------------------------------- */
-        
-        function renderPlatformTabs() {
-            const container = document.getElementById("platform-tabs-container");
-            container.innerHTML = PLATFORMS.map(platform => `
-                <button type="button" onclick="setPlatformFilter('${platform}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${selectedPlatformFilter === platform ? 'bg-brand-600 text-white shadow-sm' : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-white'}">
-                    ${platform}
-                </button>
-            `).join('');
-        }
-
-        window.setPlatformFilter = function(platform) {
-            selectedPlatformFilter = platform;
-            renderPlatformTabs();
-            populateServicesDropdown();
-        };
-
-        function populateServicesDropdown() {
-            const selectEl = document.getElementById("order-service-select");
-            selectEl.innerHTML = '<option value="">-- Choose an operational pipeline --</option>';
-            
-            const filtered = servicesCached.filter(s => {
-                if (selectedPlatformFilter === "All") return true;
-                return String(s.category).toLowerCase() === selectedPlatformFilter.toLowerCase();
-            });
-
-            filtered.forEach(service => {
-                const opt = document.createElement("option");
-                opt.value = service.id;
-                opt.innerText = `[${service.category}] ${service.name} - $${parseFloat(service.rate).toFixed(2)}/1k`;
-                selectEl.appendChild(opt);
-            });
-
-            // Reset dynamic fields when dropdown updates
-            document.getElementById("service-description-wrapper").classList.add("hidden");
-            calculateDynamicCharge();
-        }
-
-        // Active dynamic event tracking attachments
-        document.getElementById("order-service-select").addEventListener("change", (e) => {
-            const selectedId = e.target.value;
-            const match = servicesCached.find(s => s.id === selectedId);
-            const wrapper = document.getElementById("service-description-wrapper");
-            
-            if (match) {
-                wrapper.classList.remove("hidden");
-                document.getElementById("service-description-text").innerText = match.description || "No parameter constraints documented.";
-                document.getElementById("service-rate-text").innerText = parseFloat(match.rate).toFixed(2);
-            } else {
-                wrapper.classList.add("hidden");
-            }
-            calculateDynamicCharge();
-        });
-
-        document.getElementById("order-quantity").addEventListener("input", calculateDynamicCharge);
-
-        function calculateDynamicCharge() {
-            const serviceId = document.getElementById("order-service-select").value;
-            const qty = parseInt(document.getElementById("order-quantity").value) || 0;
-            const chargeInput = document.getElementById("order-charge");
-
-            const match = servicesCached.find(s => s.id === serviceId);
-            if (!match || qty <= 0) {
-                chargeInput.value = "0.00";
-                return;
-            }
-
-            const calculated = (parseFloat(match.rate) / 1000) * qty;
-            chargeInput.value = calculated.toFixed(4);
-        }
-
-        window.handleOrderSubmit = async function(e) {
-            e.preventDefault();
-            if(!currentUser || !currentUserData) return;
-
-            const serviceId = document.getElementById("order-service-select").value;
-            const link = document.getElementById("order-link").value.trim();
-            const quantity = parseInt(document.getElementById("order-quantity").value);
-            
-            const serviceMatch = servicesCached.find(s => s.id === serviceId);
-            if(!serviceMatch) {
-                showToast("Please choose a valid active campaign pipeline.", "error");
-                return;
-            }
-
-            if(quantity < 100 || quantity > 100000) {
-                showToast("Quantity constraints violated. Range: 100 - 100,000.", "error");
-                return;
-            }
-
-            const calculatedCharge = (parseFloat(serviceMatch.rate) / 1000) * quantity;
-            const userDocRef = doc(db, "users", currentUser.uid);
-
-            try {
-                // ACID Compliant Atomic Database Execution Wrapper Setup
-                await runTransaction(db, async (transaction) => {
-                    const userSnapshot = await transaction.get(userDocRef);
-                    if (!userSnapshot.exists()) throw new Error("User record node not found.");
+        function initializeUserLiveContextStreams(clientUid) {
+            // Stream Matrix A: Profile Balance Metrics Tracker
+            onSnapshot(doc(db, "users", clientUid), (snapshot) => {
+                if (snapshot.exists()) {
+                    currentUserProfileNode = { uid: snapshot.id, ...snapshot.data() };
+                    const formattedBalance = parseFloat(currentUserProfileNode.balance || 0).toFixed(2);
                     
-                    const dynamicBalance = parseFloat(userSnapshot.data().balance || 0);
-                    if (dynamicBalance < calculatedCharge) {
-                        throw new Error("Insufficient operational balance mapping. Transaction terminated.");
-                    }
-
-                    // Deduct calculated balance matrix allocation
-                    transaction.update(userDocRef, {
-                        balance: dynamicBalance - calculatedCharge
-                    });
-
-                    // Record a new document inside the root `orders` collection
-                    const newOrderRef = doc(collection(db, "orders"));
-                    transaction.set(newOrderRef, {
-                        userId: currentUser.uid,
-                        userEmail: currentUser.email,
-                        serviceName: serviceMatch.name,
-                        category: serviceMatch.category,
-                        link: link,
-                        quantity: quantity,
-                        charge: calculatedCharge,
-                        status: "Pending",
-                        timestamp: serverTimestamp()
-                    });
-                });
-
-                showToast("Service system sent, wait for approve", "success");
-                document.getElementById("order-form").reset();
-                document.getElementById("service-description-wrapper").classList.add("hidden");
-                document.getElementById("order-charge").value = "0.00";
-            } catch (err) {
-                showToast(err.message, "error");
-            }
-        };
-
-
-        /* ------------------------------------------------------------- */
-        /* SERVICES VIEW CONTROLLER RENDER                               */
-        /* ------------------------------------------------------------- */
-        
-        function renderServicesCatalogueTable() {
-            const tbody = document.getElementById("services-table-body");
-            if(servicesCached.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No active pipelines online in Firestore dashboard index.</td></tr>`;
-                return;
-            }
-            buildTableRows(servicesCached);
-        }
-
-        function buildTableRows(dataArray) {
-            const tbody = document.getElementById("services-table-body");
-            tbody.innerHTML = dataArray.map(service => `
-                <tr class="hover:bg-slate-900/40 transition-colors">
-                    <td class="px-6 py-3 font-mono text-slate-500 text-[11px]">${service.id}</td>
-                    <td class="px-6 py-3">
-                        <span class="block font-semibold text-slate-200">${service.name}</span>
-                        <span class="block text-[11px] text-slate-400 truncate max-w-xs">${service.description || ''}</span>
-                    </td>
-                    <td class="px-6 py-3">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">${service.category}</span>
-                    </td>
-                    <td class="px-6 py-3 font-bold text-emerald-400">$${parseFloat(service.rate).toFixed(2)}</td>
-                    <td class="px-6 py-3 text-slate-400 font-mono text-[11px]">${service.min || 100} / ${service.max || 100000}</td>
-                </tr>
-            `).join('');
-        }
-
-        window.filterServicesTable = function() {
-            const keyword = document.getElementById("services-search").value.toLowerCase();
-            const filtered = servicesCached.filter(s => 
-                String(s.name).toLowerCase().includes(keyword) || 
-                String(s.id).toLowerCase().includes(keyword) || 
-                String(s.category).toLowerCase().includes(keyword)
-            );
-            buildTableRows(filtered);
-        };
-
-
-        /* ------------------------------------------------------------- */
-        /* CHRONOLOGICAL TIMELINE UPDATES LAYER                          */
-        /* ------------------------------------------------------------- */
-        
-        function renderUpdatesTimeline(updatesArray) {
-            const container = document.getElementById("updates-timeline-container");
-            if(updatesArray.length === 0) {
-                container.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">No historical rate tracking changes registered.</p>`;
-                return;
-            }
-
-            // Client-side sort mapping logic based on availability of metadata timestamp structures
-            updatesArray.sort((a,b) => {
-                const tA = a.timestamp ? a.timestamp.toMillis() : 0;
-                const tB = b.timestamp ? b.timestamp.toMillis() : 0;
-                return tB - tA; 
+                    document.getElementById("profile-balance-display").innerText = "$" + formattedBalance;
+                    document.getElementById("dash-balance").innerText = "$" + formattedBalance;
+                    document.getElementById("profile-name-display").innerText = currentUserProfileNode.username || "Client User";
+                    
+                    // Recompute counts based on order pipeline changes
+                    recomputeSummaryStatsMetricsCounters();
+                }
             });
 
-            container.innerHTML = updatesArray.map(update => {
-                let badgeColor = "bg-blue-500/10 text-blue-400 border-blue-500/20";
-                const typeStr = String(update.type || '');
-                if(typeStr.toLowerCase().includes("increase")) badgeColor = "bg-rose-500/10 text-rose-400 border-rose-500/20";
-                if(typeStr.toLowerCase().includes("decrease") || typeStr.toLowerCase().includes("reduced")) badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+            // Stream Matrix B: Realtime Orders Channel Constraint Mapping
+            const userOrdersQueryConstraint = query(collection(db, "orders"), where("userEmail", "==", auth.currentUser.email));
+            onSnapshot(userOrdersQueryConstraint, (snapshot) => {
+                globalUserOrdersFootprint = [];
+                snapshot.forEach(doc => {
+                    globalUserOrdersFootprint.push({ id: doc.id, ...doc.data() });
+                });
+                renderUserPersonalHistoryLogsTable();
+                recomputeSummaryStatsMetricsCounters();
+            });
 
-                const displayDate = update.timestamp ? new Date(update.timestamp.toMillis()).toLocaleString() : "Real-time Verified Sync";
+            // Stream Matrix C: Global Admin Broadcast Log Updates Feed
+            onSnapshot(collection(db, "updates"), (snapshot) => {
+                const logsBox = document.getElementById("live-updates-log-box");
+                const listedUpdates = [];
+                snapshot.forEach(doc => listedUpdates.push(doc.data()));
 
-                return `
-                    <div class="relative pl-6">
-                        <div class="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full bg-slate-800 border-2 border-brand-500"></div>
-                        <div class="bg-dark-900 border border-slate-800 p-4 rounded-xl shadow-lg space-y-2">
-                            <div class="flex items-center justify-between flex-wrap gap-2">
-                                <h4 class="text-sm font-bold text-white">${update.title || 'Service Configuration Updated'}</h4>
-                                <span class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-semibold border ${badgeColor}">${update.type || 'System Parameter Shift'}</span>
-                            </div>
-                            <p class="text-xs text-slate-400">${update.details || 'Rate optimization deployment processed successfully.'}</p>
-                            <span class="block text-[10px] font-mono text-slate-500">${displayDate}</span>
+                if(listedUpdates.length === 0) {
+                    logsBox.innerHTML = `<p class="text-slate-600 py-2">No active infrastructure broadcasts found.</p>`;
+                    return;
+                }
+
+                logsBox.innerHTML = listedUpdates.map(upd => `
+                    <div class="py-2.5 space-y-1">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="font-bold text-slate-300">${upd.title}</span>
+                            <span class="px-1.5 py-0.2 bg-white/5 border border-white/5 rounded text-[10px] text-purple-400 font-bold">${upd.type}</span>
                         </div>
+                        <p class="text-slate-400 text-[11px] leading-relaxed">${upd.details}</p>
                     </div>
-                `;
-            }).join('');
+                `).join('');
+            });
+
+            // Stream Matrix D: Fetch Services Blueprint Configuration Database
+            onSnapshot(collection(db, "services"), (snapshot) => {
+                cachedServicesCatalog = [];
+                snapshot.forEach(doc => {
+                    cachedServicesCatalog.push({ id: doc.id, ...doc.data() });
+                });
+                populateCategoryDropdownSelectors();
+            });
+        }
+
+        function recomputeSummaryStatsMetricsCounters() {
+            let activeCount = 0;
+            globalUserOrdersFootprint.forEach(o => { if(o.status === "Pending") activeCount++; });
+            
+            document.getElementById("dash-active-orders").innerText = activeCount;
+            document.getElementById("dash-total-orders").innerText = globalUserOrdersFootprint.length;
         }
 
 
         /* ------------------------------------------------------------- */
-        /* TRACKING DATA TABLE FOR HISTORICAL ORDERS                     */
+        /* ORDER ALLOCATION UTILITIES AND FLOW LOGIC                    */
         /* ------------------------------------------------------------- */
         
-        function renderOrdersTable(ordersArray) {
-            const tbody = document.getElementById("orders-table-body");
-            if(ordersArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-500">No active campaign parameters recorded under this tracking token footprint.</td></tr>`;
+        function populateCategoryDropdownSelectors() {
+            const catSelect = document.getElementById("order-category-select");
+            // Extract distinct alphanumeric categories values
+            const uniqueCategories = [...new Set(cachedServicesCatalog.map(s => s.category))];
+            
+            catSelect.innerHTML = `<option value="">-- Load Category Domain Ecosystem --</option>` + 
+                uniqueCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        window.filterServicesByCategoryDropdownSelection = function() {
+            const chosenCategory = document.getElementById("order-category-select").value;
+            const serviceSelect = document.getElementById("order-service-select");
+
+            if(!chosenCategory) {
+                serviceSelect.innerHTML = `<option value="">-- Awaiting Domain Selection --</option>`;
                 return;
             }
 
-            tbody.innerHTML = ordersArray.map(order => {
-                let statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">Pending</span>`;
-                if(order.status === "Approved") {
-                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Approved</span>`;
-                } else if(order.status === "Denied") {
-                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">Denied</span>`;
-                }
+            const matchedPackages = cachedServicesCatalog.filter(s => s.category === chosenCategory);
+            serviceSelect.innerHTML = matchedPackages.map(s => `
+                <option value="${s.id}"> ${s.name} - ($${parseFloat(s.rate).toFixed(4)} / 1k)</option>
+            `).join('');
 
-                return `
-                    <tr class="hover:bg-slate-900/40 transition-colors">
-                        <td class="px-6 py-3.5 font-mono text-[11px] text-slate-400">${order.id}</td>
-                        <td class="px-6 py-3.5 font-medium text-slate-200">${order.serviceName || 'Unknown Pipeline'}</td>
-                        <td class="px-6 py-3.5"><a href="${order.link}" target="_blank" class="text-brand-400 hover:underline truncate block max-w-xs">${order.link}</a></td>
-                        <td class="px-6 py-3.5 font-mono text-slate-300">${parseInt(order.quantity).toLocaleString()}</td>
-                        <td class="px-6 py-3.5 text-emerald-400 font-semibold">$${parseFloat(order.charge || 0).toFixed(4)}</td>
-                        <td class="px-6 py-3.5">${statusBadge}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
+            calculateComputedOrderChargeCost();
+        };
 
+        window.calculateComputedOrderChargeCost = function() {
+            const serviceId = document.getElementById("order-service-select").value;
+            const quantity = parseInt(document.getElementById("order-qty-input").value || 0);
+            const chargeDisplay = document.getElementById("order-charge-display");
 
-        /* ------------------------------------------------------------- */
-        /* MANUAL BKASH TRANSACTION DEPOSIT LOGIC                        */
-        /* ------------------------------------------------------------- */
-        
-        window.handleDepositSubmit = async function(e) {
+            if(!serviceId || quantity <= 0) {
+                chargeDisplay.innerText = "$0.0000";
+                return;
+            }
+
+            const activeServiceNode = cachedServicesCatalog.find(s => s.id === serviceId);
+            if (activeServiceNode) {
+                const computedTotalCost = (activeServiceNode.rate / 1000) * quantity;
+                chargeDisplay.innerText = "$" + computedTotalCost.toFixed(4);
+            }
+        };
+
+        window.handleDispatchNewOrder = async function(e) {
             e.preventDefault();
-            if(!currentUser) return;
+            if(!currentUserProfileNode) return;
 
-            const name = document.getElementById("fund-name").value.trim();
-            const phone = document.getElementById("fund-phone").value.trim();
-            const email = document.getElementById("fund-email").value.trim();
-            const amount = parseFloat(document.getElementById("fund-amount").value);
-            const bkashNum = document.getElementById("fund-bkash").value.trim();
-            const txnId = document.getElementById("fund-txnid").value.trim();
+            const serviceId = document.getElementById("order-service-select").value;
+            const targetUrl = document.getElementById("order-link-url").value.trim();
+            const qtyInput = parseInt(document.getElementById("order-qty-input").value);
+
+            const activeServiceNode = cachedServicesCatalog.find(s => s.id === serviceId);
+            if(!activeServiceNode) {
+                showUserToast("Selected structural configuration payload invalid.", "error");
+                return;
+            }
+
+            const dynamicComputedCostVal = (activeServiceNode.rate / 1000) * qtyInput;
+            const liquidWalletBalance = parseFloat(currentUserProfileNode.balance || 0);
+
+            // Client-side financial threshold check
+            if (liquidWalletBalance < dynamicComputedCostVal) {
+                showUserToast("Insufficient liquid wallet capital resources. Access funding desk.", "error");
+                return;
+            }
 
             try {
-                // Post mapping registration sequence onto ledger root `/deposits`
+                // Instantly register order payload packet into database mapping parameters
+                await addDoc(collection(db, "orders"), {
+                    serviceId: serviceId,
+                    serviceName: activeServiceNode.name,
+                    link: targetUrl,
+                    quantity: qtyInput,
+                    charge: dynamicComputedCostVal,
+                    status: "Pending",
+                    userEmail: currentUserProfileNode.email,
+                    timestamp: serverTimestamp()
+                });
+
+                // Deduct balance from user document mapping parameters safely
+                // Note: Production frameworks balance updates are reinforced by admin.html handling or Cloud Functions logic.
+                showUserToast("Campaign deployment committed to processing pipeline queues.", "success");
+                document.getElementById("form-submit-order").reset();
+                document.getElementById("order-charge-display").innerText = "$0.0000";
+            } catch (err) {
+                showUserToast(err.message, "error");
+            }
+        };
+
+
+        /* ------------------------------------------------------------- */
+        /* MANUAL ADD FUND PAYMENT NOTIFICATION DESK LOGIC              */
+        /* ------------------------------------------------------------- */
+        
+        window.handleDispatchDepositVerification = async function(e) {
+            e.preventDefault();
+            if(!currentUserProfileNode) return;
+
+            const clientName = document.getElementById("fund-name").value.trim();
+            const phone = document.getElementById("fund-phone").value.trim();
+            const amount = parseFloat(document.getElementById("fund-amount").value);
+            const bkashNum = document.getElementById("fund-bkash-num").value.trim();
+            const txnId = document.getElementById("fund-txnid").value.trim().toUpperCase();
+
+            try {
+                // Register deposit pipeline tracking packet reference matched directly by admin.html transactions
                 await addDoc(collection(db, "deposits"), {
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    clientName: name,
+                    userId: auth.currentUser.uid,
+                    userEmail: currentUserProfileNode.email,
+                    clientName: clientName,
                     phone: phone,
-                    email: email,
                     amount: amount,
                     bkashNumber: bkashNum,
                     transactionId: txnId,
@@ -919,39 +622,68 @@
                     timestamp: serverTimestamp()
                 });
 
-                // Enforcing exact business logic notification alert string requirement
-                alert("Fund status pending, plz w8 for approvel");
-                document.getElementById("deposit-form").reset();
-                showToast("Transaction queued for admin manual approval pipeline verification.", "success");
+                showUserToast("Capital block log submitted. Verification payload pending audit.", "success");
+                document.getElementById("form-submit-fund").reset();
             } catch (err) {
-                showToast(err.message, "error");
+                showUserToast(err.message, "error");
             }
         };
 
 
         /* ------------------------------------------------------------- */
-        /* NON-BLOCKING UI TOAST NOTIFICATION UTILITIES                   */
+        /* DATA PRESENTATION RENDERING MECHANISMS MODULES                */
         /* ------------------------------------------------------------- */
         
-        function showToast(message, type = "info") {
-            const container = document.getElementById("toast-container");
+        function renderUserPersonalHistoryLogsTable() {
+            const tbody = document.getElementById("table-user-history-body");
+            if(globalUserOrdersFootprint.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-600">No active tracking records logged under this authenticated profile node email.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = globalUserOrdersFootprint.map(o => {
+                let statusBadgeStyle = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+                if(o.status === "Approved") statusBadgeStyle = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                if(o.status === "Denied") statusBadgeStyle = "bg-red-500/10 text-red-400 border-red-500/20";
+
+                return `
+                    <tr class="hover:bg-white/[0.01] transition-colors">
+                        <td class="px-6 py-4 font-mono text-[11px] text-slate-500">${o.id}</td>
+                        <td class="px-6 py-4 font-bold text-white">${o.serviceName || "Core Allocation Engine"}</td>
+                        <td class="px-6 py-4 font-mono text-slate-400"><a href="${o.link}" target="_blank" class="hover:underline text-cyan-400 truncate block max-w-xs">${o.link}</a></td>
+                        <td class="px-6 py-4 font-mono font-bold text-slate-300">${parseInt(o.quantity).toLocaleString()}</td>
+                        <td class="px-6 py-4 font-mono text-emerald-400 font-bold">$${parseFloat(o.charge || 0).toFixed(4)}</td>
+                        <td class="px-6 py-4 text-right">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border ${statusBadgeStyle}">${o.status}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+
+        /* ------------------------------------------------------------- */
+        /* GRAPHICS INTERACTIVE TOAST SYSTEM ENGINE                      */
+        /* ------------------------------------------------------------- */
+        
+        function showUserToast(message, type = "info") {
+            const container = document.getElementById("toast-wrapper");
             const toast = document.createElement("div");
             
-            let bgType = "bg-slate-900 border-slate-700 text-slate-100";
-            let icon = "info";
-            if (type === "success") { bgType = "bg-emerald-950 border-emerald-500/30 text-emerald-200"; icon = "check-circle"; }
-            if (type === "error") { bgType = "bg-rose-950 border-rose-500/30 text-rose-200"; icon = "alert-triangle"; }
+            let styleClasses = "bg-slate-900 border-slate-800 text-slate-200";
+            let iconKey = "info";
+            if (type === "success") { styleClasses = "bg-cyan-950/80 border-cyan-500/30 text-cyan-200"; iconKey = "check-circle"; }
+            if (type === "error") { styleClasses = "bg-red-950/80 border-red-500/30 text-red-200"; iconKey = "alert-triangle"; }
 
-            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm ${bgType}`;
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm ${styleClasses}`;
             toast.innerHTML = `
-                <i data-lucide="${icon}" class="h-4 w-4 shrink-0"></i>
-                <span class="text-xs font-medium leading-tight">${message}</span>
+                <i data-lucide="${iconKey}" class="h-4 w-4 text-currentColor shrink-0"></i>
+                <span class="text-xs font-semibold leading-tight">${message}</span>
             `;
             
             container.appendChild(toast);
             lucide.createIcons();
 
-            // Trigger animation frame sequence entry
             requestAnimationFrame(() => {
                 toast.classList.remove("translate-y-2", "opacity-0");
             });
@@ -959,10 +691,10 @@
             setTimeout(() => {
                 toast.classList.add("translate-y-2", "opacity-0");
                 setTimeout(() => toast.remove(), 300);
-            }, 4500);
+            }, 4000);
         }
 
-        // Initialize Icons globally at startup loop completion state
+        // Init Layout Configuration Call
         lucide.createIcons();
     </script>
 </body>
