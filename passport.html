@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NID Registration Form</title>
+</head>
+<body>
+
+    <!-- Form for passport -->
+    <form action="" method="POST">
+        
+        <h3>Personal Details</h3>
+        
+        <div class="form-group">
+            <label for="full-name">Full Name:</label><br>
+            <input type="text" id="full-name" name="fullName" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="dob">Date of Birth:</label><br>
+            <input type="date" id="dob" name="dateOfBirth" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="birth-reg-num">Birth Registration Number:</label><br>
+            <input type="text" id="birth-reg-num" name="birthRegNum">
+        </div>
+        
+        <div class="form-group">
+            <label for="blood-group">Blood Group:</label>
+            <select id="blood-group" name="bloodGroup">
+                <option value="">-- Select --</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Gender:</label>
+            <input type="radio" id="gender-male" name="gender" value="male">
+            <label for="gender-male">Male</label>
+            
+            <input type="radio" id="gender-female" name="gender" value="female">
+            <label for="gender-female">Female</label>
+            
+            <input type="radio" id="gender-other" name="gender" value="other">
+            <label for="gender-other">Other</label>
+        </div>
+        
+        <h3>Family Details</h3>
+        
+        <div class="form-group">
+            <label for="father-name">Father's Name:</label><br>
+            <input type="text" id="father-name" name="fatherName">
+        </div>
+        
+        <div class="form-group">
+            <label for="mother-name">Mother's Name:</label><br>
+            <input type="text" id="mother-name" name="motherName">
+        </div>
+        
+        <h3>Address</h3>
+        
+        <div class="form-group">
+            <label for="present-address">Present Address:</label><br>
+            <textarea id="present-address" name="presentAddress" rows="4" cols="50"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="permanent-address">Permanent Address:</label><br>
+            <textarea id="permanent-address" name="permanentAddress" rows="4" cols="50"></textarea>
+        </div>
+        
+        <h3>Security</h3>
+        
+        <div class="form-group">
+            <label for="account-password">Password:</label><br>
+            <input type="password" id="account-password" name="accountPassword">
+        </div>
+        
+        <div class="form-group">
+            <input type="checkbox" id="declaration" name="declaration" value="agreed" required>
+            <label for="declaration">I declare that all the information provided above is correct.</label>
+        </div>
+        
+        <div class="form-group">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+</body>
+</html>
