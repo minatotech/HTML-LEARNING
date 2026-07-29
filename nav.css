@@ -8,6 +8,7 @@ nav {
     height: 60px;
     font-family: arial;
     margin-bottom: 25px; 
+    float:right;
 }
 
 .logo {
